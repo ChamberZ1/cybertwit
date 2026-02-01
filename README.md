@@ -3,9 +3,6 @@ twitter bot for daily cybersecurity news
 
 # Blueprint
 
-## Hosting/Automation
-Use GitHub Actions to run script automatically every day at a specific time.
-
 ## The Stack
 - Python code
 - Google AI Studio / Gemini free API
