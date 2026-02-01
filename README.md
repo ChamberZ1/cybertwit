@@ -18,8 +18,6 @@ twitter bot for daily cybersecurity news
 - [Krebs On Security](https://krebsonsecurity.com/feed/) - deep-dives into cybercrime infrastructure +1 +f
 - [Schneier on Security](https://www.schneier.com/feed/) - "thought leader" perspective on security and privacy +f
 - [CISA](https://www.cisa.gov/cybersecurity-advisories/all.xml) - official alerts on exploited vulns +1 +f
-- [US-CERT/National Cyber Awareness System Alerts](https://us-cert.cisa.gov/ncas/alerts.xml)
-- [US-CERT/National Cyber Awareness System Analysis Reports](https://us-cert.cisa.gov/ncas/analysis-reports.xml)
 - [SecurityWeek](https://www.securityweek.com/feed/) - industry-wide trends and venture capital news in cyber
 - [Google Online Security Blog](https://security.googleblog.com/feeds/posts/default) - Direct news on browser security and massive cloud-scale threats
 - [Sophos News](https://news.sophos.com/en-us/feed/) - threat research and security news from Sophos Labs
