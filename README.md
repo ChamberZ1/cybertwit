@@ -10,3 +10,26 @@ twitter bot for daily cybersecurity news
 - GitHub to store code and
 - GitHub Actions to execute
 - Start with RSSs for sources
+
+### Recommended RSS
+- [BleepingComputer](https://www.bleepingcomputer.com/feed/) - breaking ransomware and malware news +f
+- [The Hacker News](https://feeds.feedburner.com/TheHackersNews) - general vuln and global cyber events +1
+- [Dark Reading](https://www.darkreading.com/rss.xml) - enterprise-level analysis and strategic security news +1
+- [Krebs On Security](https://krebsonsecurity.com/feed/) - deep-dives into cybercrime infrastructure +1 +f
+- [Schneier on Security](https://www.schneier.com/feed/) - "thought leader" perspective on security and privacy +f
+- [CISA](https://www.cisa.gov/cybersecurity-advisories/all.xml) - official alerts on exploited vulns +1 +f
+- [US-CERT/National Cyber Awareness System Alerts](https://us-cert.cisa.gov/ncas/alerts.xml)
+- [US-CERT/National Cyber Awareness System Analysis Reports](https://us-cert.cisa.gov/ncas/analysis-reports.xml)
+- [SecurityWeek](https://www.securityweek.com/feed/) - industry-wide trends and venture capital news in cyber
+- [Google Online Security Blog](https://security.googleblog.com/feeds/posts/default) - Direct news on browser security and massive cloud-scale threats
+- [Sophos News](https://news.sophos.com/en-us/feed/) - threat research and security news from Sophos Labs
+- [Threatpost](https://threatpost.com/feed/) - independent cyber news covering malware, hacks and tech trends
+- [WeLiveSecurity](https://www.welivesecurity.com/feed/) - malware and threat research plus advisories
+- [HackRead](https://hackread.com/feed/) - updates on hacking, cybercrime, privacy
+- [IT Security Guru](https://itsecurityguru.org/feed/) - daily curated IT/security headlines
+- [Help Net Security](https://www.helpnetsecurity.com/feed/) - enterprise-focused security news
+- [Cybersecurity Dive](https://www.cybersecuritydive.com/feeds/) - journalism + analysis for impactful trends
+- [NCSC (UK)](https://www.ncsc.gov.uk/information/rss-feeds) - official cyber guidance & news from UK National Cyber Security
+
+- Cyberwire Daily (heard from a MITRE employee)
+- SlashDot (heard from a MITRE employee)
