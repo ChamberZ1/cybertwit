@@ -13,7 +13,7 @@ twitter bot for daily cybersecurity news
 
 ### Recommended RSS
 - [BleepingComputer](https://www.bleepingcomputer.com/feed/) - breaking ransomware and malware news +f
-- [The Hacker News](https://feeds.feedburner.com/TheHackersNews) - general vuln and global cyber events +1
+- [The Hacker News](https://feeds.feedburner.com/TheHackersNews) - general vuln and global cyber events +1 +f
 - [Dark Reading](https://www.darkreading.com/rss.xml) - enterprise-level analysis and strategic security news +1
 - [Krebs On Security](https://krebsonsecurity.com/feed/) - deep-dives into cybercrime infrastructure +1 +f
 - [Schneier on Security](https://www.schneier.com/feed/) - "thought leader" perspective on security and privacy +f
