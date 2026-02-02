@@ -11,6 +11,18 @@ twitter bot for daily cybersecurity news
 - GitHub Actions to execute
 - Start with RSSs for sources
 
+### LLM ranked List (Top 6)
+***must includes***
+- CISA [GPT] [Gmni] [Clde] [Grok]
+- Krebs on Security [GPT] [Gmni] [Clde] [Grok]
+- The Hacker News [GPT] [Gmni] [Clde] [Grok]
+- BleepingComputer [GPT] [Gmni] [Clde] [Grok]
+- Dark Reading [GPT] [Gmni] [Grok]
+---
+- CyberWire Daily [GPT] [Gmni] (daily briefing, so just 1 a day I can proll include this)  
+- Google Online Security Blog [Clde] (output frequency is low, I can probably still include this)
+- Schneider on Security [Clde] [Grok] (maybe)
+
 ### Recommended RSS
 - [BleepingComputer](https://www.bleepingcomputer.com/feed/) - breaking ransomware and malware news +f
 - [The Hacker News](https://feeds.feedburner.com/TheHackersNews) - general vuln and global cyber events +1 +f
@@ -28,6 +40,5 @@ twitter bot for daily cybersecurity news
 - [Help Net Security](https://www.helpnetsecurity.com/feed/) - enterprise-focused security news
 - [Cybersecurity Dive](https://www.cybersecuritydive.com/feeds/) - journalism + analysis for impactful trends
 - [NCSC (UK)](https://www.ncsc.gov.uk/information/rss-feeds) - official cyber guidance & news from UK National Cyber Security
-
 - Cyberwire Daily (heard from a MITRE employee)
 - SlashDot (heard from a MITRE employee)
