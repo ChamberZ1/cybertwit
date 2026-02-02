@@ -77,4 +77,4 @@ if __name__ == "__main__":
 
     items = fetch_rss_feeds(feeds)
     for item in items:
-        print(f"- [{item['source']}] {item['title']}\n  \n{item['summary']}\n {item['link']}\n")
+        print(f"- [{item['source']}] {item['title']}\n  \nSummary: {item['summary']} \n\nFull article: {item['link']}\n")
