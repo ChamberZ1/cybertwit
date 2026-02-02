@@ -1,0 +1,80 @@
+import feedparser
+import requests
+from typing import List, Dict, Tuple
+from dateutil import parser as date_parser
+from datetime import datetime, timedelta, timezone
+import html
+from bs4 import BeautifulSoup
+
+HEADERS = {
+    "User-Agent": "cybertwit-bot/0.1"
+}
+
+def clean_html(text: str) -> str:
+    if not text:
+        return ""
+    text = html.unescape(text)
+    soup = BeautifulSoup(text, "html.parser")
+    return soup.get_text(separator=" ", strip=True)
+
+def fetch_rss_feeds(feeds: List[Tuple[str, str]]) -> List[Dict]:
+    articles = []
+    seen_links = set()
+    time_threshold = datetime.now(timezone.utc) - timedelta(hours=24)
+
+    for source_name, url in feeds:
+        try:
+            resp = requests.get(url, timeout=20, headers=HEADERS)
+            resp.raise_for_status()
+            feed = feedparser.parse(resp.content)
+
+            for entry in feed.entries:
+                link = entry.get("link", "").strip()
+                if not link or link in seen_links:
+                    continue
+
+                published = None
+                if "published" in entry:
+                    try:
+                        published = date_parser.parse(entry.published)
+
+                        if published.tzinfo is None:
+                            published = published.replace(tzinfo=timezone.utc)
+                        else:
+                            published = published.astimezone(timezone.utc)
+                    except Exception:
+                        pass
+
+                if published and published < time_threshold:
+                    continue
+
+                seen_links.add(link)
+
+                articles.append({
+                    "title": clean_html(entry.get("title", "").strip()),
+                    "link": link,
+                    "summary": clean_html(entry.get("summary", "").strip()),
+                    "published": published,
+                    "source": source_name,
+                })
+
+        except Exception as e:
+            print(f"Error fetching {source_name}: {e}")
+
+    return articles
+
+
+if __name__ == "__main__":
+    feeds = [
+        ("The Hacker News", "https://feeds.feedburner.com/TheHackersNews"),
+        ("Krebs on Security", "https://krebsonsecurity.com/feed/"),
+        ("CISA", "https://www.cisa.gov/cybersecurity-advisories/all.xml"),
+        ("BleepingComputer", "https://www.bleepingcomputer.com/feed/"),
+        ("Dark Reading", "https://www.darkreading.com/rss.xml"),
+        ("Google Security Blog", "https://security.googleblog.com/feeds/posts/default"),
+        ("Schneier on Security", "https://www.schneier.com/feed/atom/"),
+    ]
+
+    items = fetch_rss_feeds(feeds)
+    for item in items:
+        print(f"- [{item['source']}] {item['title']}\n  \n{item['summary']}\n {item['link']}\n")
