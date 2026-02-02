@@ -19,7 +19,6 @@ twitter bot for daily cybersecurity news
 - BleepingComputer [GPT] [Gmni] [Clde] [Grok]
 - Dark Reading [GPT] [Gmni] [Grok]
 ---
-- CyberWire Daily [GPT] [Gmni] (daily briefing, so just 1 a day I can proll include this)  
 - Google Online Security Blog [Clde] (output frequency is low, I can probably still include this)
 - Schneider on Security [Clde] [Grok] (maybe)
 
@@ -40,5 +39,8 @@ twitter bot for daily cybersecurity news
 - [Help Net Security](https://www.helpnetsecurity.com/feed/) - enterprise-focused security news
 - [Cybersecurity Dive](https://www.cybersecuritydive.com/feeds/) - journalism + analysis for impactful trends
 - [NCSC (UK)](https://www.ncsc.gov.uk/information/rss-feeds) - official cyber guidance & news from UK National Cyber Security
-- Cyberwire Daily (heard from a MITRE employee)
+- Cyberwire Daily (heard from a MITRE employee) (no newsletter rss, only podcast, and I don't like the summary contents so I'm not going to include this)
 - SlashDot (heard from a MITRE employee)
+
+### Other
+- [red.anthropic.com](https://red.anthropic.com/) - no RSS feed available but I think the content is interesting.
