@@ -11,7 +11,7 @@ twitter bot for daily cybersecurity news
 - GitHub Actions to execute
 - Start with RSSs for sources
 
-### LLM ranked List (Top 6)
+### LLM ranked List From Recommended RSS Sources (Top 6)
 ***must includes***
 - CISA [GPT] [Gmni] [Clde] [Grok]
 - Krebs on Security [GPT] [Gmni] [Clde] [Grok]
