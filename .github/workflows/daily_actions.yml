@@ -1,1 +1,33 @@
+name: Daily Cyber Bot
+
+on:
+  schedule:
+    - cron: "0 15 * * *"   # once per day
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      # ✅ ADD THIS STEP
+      - name: Restore dedup state (cache)
+        uses: actions/cache@v4
+        with:
+          path: state
+          key: dedup-state-v1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run bot
+        run: python main.py
 

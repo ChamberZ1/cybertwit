@@ -1,6 +1,75 @@
 import sys
 import json
 from typing import List, Dict
+from dotenv import load_dotenv
+import os
+from google import genai
+load_dotenv()
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+client = genai.Client(api_key=GEMINI_API_KEY)
+MODEL_NAME = "gemini-3-flash-preview"  
+
+def build_news_block(items: List[Dict]) -> str:
+    blocks = []
+    for item in items:
+        title = item.get("title", "").strip()
+        summary = item.get("summary", "").strip()
+        source = item.get("source", "").strip()
+        link = item.get("link", "").strip()
+
+        if not title:
+            continue
+
+        block = f"- {title}"
+        if summary:
+            block += f": {summary}"
+        if source:
+            block += f" ({source})"
+        if link:
+            block += f" ({link})"
+
+        blocks.append(block)
+
+    return "\n".join(blocks)
+
+def ai_daily_digest(items: List[Dict]) -> str:
+    if not items:
+        return ""
+
+    news_block = build_news_block(items)
+
+    prompt = f"""
+You are a cybersecurity news analyst.
+
+Given the following list of cybersecurity news items, produce a concise daily digest.
+
+Rules:
+- One bullet point for each news item
+- Each bullet should be 1 short sentence (max ~20 words);
+- Start each bullet with a strong noun or action
+- Focus on what matters to defenders and security practitioners
+- No emojis, no hashtags, no marketing language
+- Use - as bullet points
+- Include the link to the original article at the next line following each bullet
+- Insert line breaks between each bullet point and link pair
+- Do not use "facilitate"
+
+News items:
+{news_block}
+"""
+
+    try:
+        response = client.models.generate_content(
+            model=MODEL_NAME,
+            contents=prompt
+        )
+        return response.text.strip()
+    except Exception as e:
+        print(f"AI summarization failed: {e}")
+        return ""
+
+
 
 def format_summaries(items: List[Dict[str, str]]) -> str:
     """
@@ -14,9 +83,9 @@ def format_summaries(items: List[Dict[str, str]]) -> str:
         if not title:
             continue
         if source:
-            lines.append(f"• {title} ({source})")
+            lines.append(f"- {title} ({source})")
         else:
-            lines.append(f"• {title}")
+            lines.append(f"- {title}")
     return "\n".join(lines)
 
 if __name__ == "__main__":

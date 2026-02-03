@@ -11,7 +11,8 @@ CYBER_KEYWORDS = [
     "cyber", "threat actor", "data extortion", "prompt injection", "adversarial AI", 
     "llm security", "zero trust", "post-quantum", "api security", "supply chain attack",
     "privilege escalation", "remote code execution", "sql injection", "malicious", "payload",
-    "command and control", "lateral movement", "persistence", "cloud security"
+    "command and control", "lateral movement", "persistence", "cloud security",
+    "remote code execution", "malicious link"
 ]
 
 DEFAULT_FIELDS = ("title", "summary")
