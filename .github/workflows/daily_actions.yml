@@ -1,8 +1,6 @@
 name: Daily Cyber Bot
 
 on:
-  schedule:
-    - cron: "0 15 * * *"   # once per day
   workflow_dispatch:
 
 jobs:
