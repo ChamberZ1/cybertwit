@@ -11,6 +11,11 @@ jobs:
     
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+      MAIL_TO: ${{ secrets.MAIL_TO }}
+      MAIL_SERVER: smtp.gmail.com
+      MAIL_PORT: 465
       
     steps:
       - name: Checkout repo
@@ -31,7 +36,9 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run bot
-        run: python main.py > output.log 2>&1
+        run: |
+          set -o pipefail
+          python main.py 2>&1 | tee output.log
         
       - name: Upload output log
         uses: actions/upload-artifact@v4
@@ -39,4 +46,19 @@ jobs:
         with:
           name: bot-output
           path: output.log
+
+      - name: Email output log
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ env.MAIL_SERVER }}
+          server_port: ${{ env.MAIL_PORT }}
+          username: ${{ env.MAIL_USERNAME }}
+          password: ${{ env.MAIL_PASSWORD }}
+          subject: "CyberBot ${{ job.status }} (run ${{ github.run_number }})"
+          to: ${{ env.MAIL_TO }}
+          from: ${{ env.MAIL_USERNAME }}
+          body: "Please find attached the daily bot output log."
+          attachments: output.log
+          secure: true
 
