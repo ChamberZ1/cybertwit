@@ -1,14 +1,16 @@
-import sys
-import json
 from typing import List, Dict
 from dotenv import load_dotenv
 import os
+import requests
 from google import genai
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API")
 
-client = genai.Client(api_key=GEMINI_API_KEY)
-MODEL_NAME = "gemini-3-flash-preview"  
+client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
+GEMINI_MODEL_NAME = "gemini-3-flash-preview"  
+GROQ_MODEL_NAME = os.getenv("GROQ_MODEL_NAME")
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 def build_news_block(items: List[Dict]) -> str:
     blocks = []
@@ -33,13 +35,10 @@ def build_news_block(items: List[Dict]) -> str:
 
     return "\n".join(blocks)
 
-def ai_daily_digest(items: List[Dict]) -> str:
-    if not items:
-        return ""
-
+def build_digest_prompt(items: List[Dict]) -> str:
     news_block = build_news_block(items)
 
-    prompt = f"""
+    return f"""
 You are a cybersecurity news analyst.
 
 Given the following list of cybersecurity news items, produce a concise daily digest.
@@ -59,15 +58,67 @@ News items:
 {news_block}
 """
 
-    try:
-        response = client.models.generate_content(
-            model=MODEL_NAME,
-            contents=prompt
-        )
-        return response.text.strip()
-    except Exception as e:
-        print(f"AI summarization failed: {e}")
+def summarize_with_gemini(prompt: str) -> str:
+    if not client:
         return ""
+
+    response = client.models.generate_content(
+        model=GEMINI_MODEL_NAME,
+        contents=prompt
+    )
+    return (response.text or "").strip()
+
+def summarize_with_groq(prompt: str) -> str:
+    if not GROQ_API_KEY:
+        return ""
+
+    response = requests.post(
+        GROQ_API_URL,
+        headers={
+            "Authorization": f"Bearer {GROQ_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "model": GROQ_MODEL_NAME,
+            "messages": [
+                {"role": "system", "content": "You are a cybersecurity news analyst."},
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": 0.2,
+        },
+        timeout=30,
+    )
+    response.raise_for_status()
+    data = response.json()
+    return (
+        data.get("choices", [{}])[0]
+        .get("message", {})
+        .get("content", "")
+        .strip()
+    )
+
+def ai_daily_digest(items: List[Dict]) -> str:
+    if not items:
+        return ""
+
+    prompt = build_digest_prompt(items)
+
+    try:
+        summary = summarize_with_gemini(prompt)
+        if summary:
+            return summary
+    except Exception as e:
+        print(f"Gemini summarization failed: {e}")
+
+    try:
+        summary = summarize_with_groq(prompt)
+        if summary:
+            return summary
+    except Exception as e:
+        print(f"Groq summarization failed: {e}")
+
+    print("AI summarization failed: Gemini and Groq were unavailable.")
+    return ""
 
 
 
