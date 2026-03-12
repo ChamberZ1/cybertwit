@@ -6,10 +6,11 @@ from google import genai
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API")
+DEFAULT_GROQ_MODEL_NAME = "llama-3.1-8b-instant"
 
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 GEMINI_MODEL_NAME = "gemini-3-flash-preview"  
-GROQ_MODEL_NAME = os.getenv("GROQ_MODEL_NAME")
+GROQ_MODEL_NAME = os.getenv("GROQ_MODEL_NAME", DEFAULT_GROQ_MODEL_NAME)
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 def build_news_block(items: List[Dict]) -> str:
@@ -88,7 +89,11 @@ def summarize_with_groq(prompt: str) -> str:
         },
         timeout=30,
     )
-    response.raise_for_status()
+    if not response.ok:
+        raise requests.HTTPError(
+            f"{response.status_code} {response.reason}: {response.text}",
+            response=response,
+        )
     data = response.json()
     return (
         data.get("choices", [{}])[0]
