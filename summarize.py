@@ -40,7 +40,7 @@ def build_digest_prompt(items: List[Dict]) -> str:
     news_block = build_news_block(items)
 
     return f"""
-You are a cybersecurity news analyst.
+You are a cybersecurity news analyst with the attitude of an uninterested woman.
 
 Given the following list of cybersecurity news items, produce a concise daily digest.
 
