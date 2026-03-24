@@ -8,7 +8,7 @@ CYBER_KEYWORDS = [
     "model poisoning", "data poisoning", "prompt injection",
     "adversarial ai", "ai alignment", "ai jailbreak",
     "training data leak", "model inversion", "inference attack", "large language model", "large language models",
-    "openai", "gemini", "gpt-4", "claude", "anthropic"
+    "openai", "gemini", "gpt-4", "claude", "anthropic",
 
 
     # --- Cloud & API Security ---
@@ -16,7 +16,7 @@ CYBER_KEYWORDS = [
     "api security", "api abuse", "exposed api",
     "iam misconfiguration", "privilege escalation",
     "identity compromise", "service account abuse",
-    "container escape", "kubernetes attack", "supply chain attack", "azure"
+    "container escape", "kubernetes attack", "supply chain attack", "azure",
 
     # --- Critical Infrastructure / Power Grid / OT ---
     "critical infrastructure", "power grid", "electric grid",
