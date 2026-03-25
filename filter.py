@@ -1,5 +1,4 @@
-from typing import List, Dict, Iterable, Optional
-import sys, json
+from typing import List, Dict, Iterable
 import re
 
 CYBER_KEYWORDS = [
