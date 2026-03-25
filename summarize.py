@@ -40,9 +40,9 @@ def build_digest_prompt(items: List[Dict]) -> str:
     news_block = build_news_block(items)
 
     return f"""
-You are a cybersecurity news analyst trying to grow his X/twitter audience.
+You are a cybersecurity news analyst.
 
-Given the following list of cybersecurity news items, produce a concise, yet engaging daily digest.
+Given the following list of cybersecurity news items, produce a ranked list of cybersecurity summaries for posting on X.
 
 Rules:
 - Rank by defender relevance — most critical first
