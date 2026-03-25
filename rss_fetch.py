@@ -5,9 +5,10 @@ from dateutil import parser as date_parser
 from datetime import datetime, timedelta, timezone
 import html
 from bs4 import BeautifulSoup
+from feeds import load_feeds
 
 HEADERS = {
-    "User-Agent": "cybertwit-bot/0.1"
+    "User-Agent": "cybertwit-bot/6.9"
 }
 
 def clean_html(text: str) -> str:
@@ -65,16 +66,7 @@ def fetch_rss_feeds(feeds: List[Tuple[str, str]]) -> List[Dict]:
 
 
 if __name__ == "__main__":
-    feeds = [
-        ("The Hacker News", "https://feeds.feedburner.com/TheHackersNews"),
-        ("Krebs on Security", "https://krebsonsecurity.com/feed/"),
-        ("CISA", "https://www.cisa.gov/cybersecurity-advisories/all.xml"),
-        ("BleepingComputer", "https://www.bleepingcomputer.com/feed/"),
-        ("Dark Reading", "https://www.darkreading.com/rss.xml"),
-        ("Google Security Blog", "https://security.googleblog.com/feeds/posts/default"),
-        ("Schneier on Security", "https://www.schneier.com/feed/atom/"),
-    ]
-
+    feeds = load_feeds()
     items = fetch_rss_feeds(feeds)
     for item in items:
         print(f"- [{item['source']}] {item['title']}\n  \nSummary: {item['summary']} \n\nFull article: {item['link']}\n")

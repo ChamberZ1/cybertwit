@@ -11,8 +11,9 @@ jobs:
     
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      GROQ_API: ${{ secrets.GROQ_API }}
-      GROQ_MODEL_NAME: llama-3.1-8b-instant
+      GEMINI_MODEL_NAME: gemini-3-flash-preview  # You can change this to your desired Gemini model
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL_NAME: llama-3.1-8b-instant  # You can change this to your desired Groq model
       MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
       MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
       MAIL_TO: ${{ secrets.MAIL_TO }}
@@ -63,4 +64,3 @@ jobs:
           body: "Please find attached the daily bot output log."
           attachments: output.log
           secure: true
-

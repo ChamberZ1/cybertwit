@@ -1,46 +1,133 @@
 # cybertwit
-twitter bot for daily cybersecurity news
 
-# Blueprint
+Cybersecurity news bot that pulls RSS feeds, filters stories, and generates a daily digest with Gemini or Groq.
 
-## The Stack
-- Python code
-- Google AI Studio / Gemini free API
-- X free API
-- GitHub to store code and
-- GitHub Actions to execute
-- Start with RSSs for sources
+## Make It Your Own
 
-### LLM ranked List From Recommended RSS Sources (Top 6)
-***must includes***
-- CISA [GPT] [Gmni] [Clde] [Grok]
-- Krebs on Security [GPT] [Gmni] [Clde] [Grok]
-- The Hacker News [GPT] [Gmni] [Clde] [Grok]
-- BleepingComputer [GPT] [Gmni] [Clde] [Grok]
-- Dark Reading [GPT] [Gmni] [Grok]
----
-- Google Online Security Blog [Clde] (output frequency is low, I can probably still include this)
-- Schneider on Security [Clde] [Grok] (maybe)
+This repo is set up so someone can fork it and customize three things without digging through the code:
 
-### Recommended RSS
-- [BleepingComputer](https://www.bleepingcomputer.com/feed/) - breaking ransomware and malware news +f
-- [The Hacker News](https://feeds.feedburner.com/TheHackersNews) - general vuln and global cyber events +1 +f
-- [Dark Reading](https://www.darkreading.com/rss.xml) - enterprise-level analysis and strategic security news +1
-- [Krebs On Security](https://krebsonsecurity.com/feed/) - deep-dives into cybercrime infrastructure +1 +f
-- [Schneier on Security](https://www.schneier.com/feed/) - "thought leader" perspective on security and privacy +f
-- [CISA](https://www.cisa.gov/cybersecurity-advisories/all.xml) - official alerts on exploited vulns +1 +f
-- [SecurityWeek](https://www.securityweek.com/feed/) - industry-wide trends and venture capital news in cyber
-- [Google Online Security Blog](https://security.googleblog.com/feeds/posts/default) - Direct news on browser security and massive cloud-scale threats
-- [Sophos News](https://news.sophos.com/en-us/feed/) - threat research and security news from Sophos Labs
-- [Threatpost](https://threatpost.com/feed/) - independent cyber news covering malware, hacks and tech trends
-- [WeLiveSecurity](https://www.welivesecurity.com/feed/) - malware and threat research plus advisories
-- [HackRead](https://hackread.com/feed/) - updates on hacking, cybercrime, privacy
-- [IT Security Guru](https://itsecurityguru.org/feed/) - daily curated IT/security headlines
-- [Help Net Security](https://www.helpnetsecurity.com/feed/) - enterprise-focused security news
-- [Cybersecurity Dive](https://www.cybersecuritydive.com/feeds/) - journalism + analysis for impactful trends
-- [NCSC (UK)](https://www.ncsc.gov.uk/information/rss-feeds) - official cyber guidance & news from UK National Cyber Security
-- Cyberwire Daily (heard from a MITRE employee) (no newsletter rss, only podcast, and I don't like the summary contents so I'm not going to include this)
-- SlashDot (heard from a MITRE employee)
+1. API keys and email settings go in environment variables.
+2. News sources go in `feeds.json`. See below for details.
+3. Filtering rules go in `filters.json`.
+4. Scheduled execution is handled by GitHub Actions.
 
-### Other
-- [red.anthropic.com](https://red.anthropic.com/) - no RSS feed available but I think the content is interesting.
+## Local Setup
+
+1. Create a virtual environment and install dependencies:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+2. Copy the example environment file and add your values:
+
+```bash
+cp .env.example .env
+```
+
+3. Edit `feeds.json` and replace the default sources with your own.
+
+4. Edit `filters.json` if you want different keywords, match fields, or short-word rules.
+
+5. Run the bot locally:
+
+```bash
+python main.py
+```
+
+## Environment Variables
+
+For local runs, the app loads values from `.env` if present.
+
+Required or commonly used variables:
+
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL_NAME`
+- `GROQ_API_KEY`
+- `GROQ_MODEL_NAME`
+- `MAIL_USERNAME`
+- `MAIL_PASSWORD`
+- `MAIL_TO`
+
+Notes:
+
+- `MAIL_PASSWORD` should usually be an app password, not your normal inbox password.
+- The code accepts `GROQ_API_KEY` and also supports the older `GROQ_API` name for backward compatibility.
+
+## Customizing Sources
+
+Edit `feeds.json` with a list of objects like this:
+
+```json
+[
+  {
+    "name": "BleepingComputer",
+    "url": "https://www.bleepingcomputer.com/feed/"
+  },
+  {
+    "name": "CISA",
+    "url": "https://www.cisa.gov/cybersecurity-advisories/all.xml"
+  }
+]
+```
+
+Each item needs:
+
+- `name`: display name for the source
+- `url`: RSS or Atom feed URL
+
+## Customizing Filtering
+
+Edit `filters.json` to control which stories are kept after feed fetches.
+
+Example structure:
+
+```json
+{
+  "fields": ["title", "summary"],
+  "keywords": ["ransomware", "incident response", "malware"],
+  "short_words": ["aws", "ai"]
+}
+```
+
+Meaning:
+
+- `fields`: which article fields are searched
+- `keywords`: case-insensitive substring matches
+- `short_words`: whole-word matches for short terms that would otherwise be noisy
+
+## GitHub Actions Setup
+
+If someone forks this repo and wants the scheduled workflow to run in GitHub:
+
+1. Go to the repo on GitHub.
+2. Open `Settings` -> `Secrets and variables` -> `Actions`.
+3. Add these repository secrets:
+   - `GEMINI_API_KEY`
+   - `GROQ_API_KEY`
+   - `MAIL_USERNAME`
+   - `MAIL_PASSWORD`
+   - `MAIL_TO`
+4. Enable Actions for the fork if GitHub has them disabled by default.
+5. Run the workflow manually once from the `Actions` tab to verify setup.
+
+The scheduled workflow lives in `.github/workflows/daily_actions.yml`.
+
+## Files That Matter
+
+- `feeds.json`: editable source list
+- `filters.json`: editable filtering rules
+- `.env.example`: local configuration template
+- `feeds.py`: feed-loading and validation logic
+- `main.py`: main bot entry point
+- `filter.py`: filter-loading and matching logic
+- `summarize.py`: Gemini and Groq integration
+- `.github/workflows/daily_actions.yml`: scheduled GitHub Actions runner
+
+## Security
+
+- Do not commit `.env`.
+- Do not put real secrets in `feeds.json`, `README.md`, or source files.
+- Prefer GitHub Actions secrets for hosted runs.

@@ -3,13 +3,15 @@ from dotenv import load_dotenv
 import os
 import requests
 from google import genai
-load_dotenv()
+
+load_dotenv()  # Load environment variables from .env file if present
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-GROQ_API_KEY = os.getenv("GROQ_API")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY") or os.getenv("GROQ_API")
+DEFAULT_GEMINI_MODEL_NAME = "gemini-3-flash-preview"
 DEFAULT_GROQ_MODEL_NAME = "llama-3.1-8b-instant"
 
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
-GEMINI_MODEL_NAME = "gemini-3-flash-preview"  
+GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", DEFAULT_GEMINI_MODEL_NAME)
 GROQ_MODEL_NAME = os.getenv("GROQ_MODEL_NAME", DEFAULT_GROQ_MODEL_NAME)
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -142,6 +144,7 @@ def format_summaries(items: List[Dict[str, str]]) -> str:
             lines.append(f"- {title}")
     return "\n".join(lines)
 
+# for testing
 if __name__ == "__main__":
     data = [
         {

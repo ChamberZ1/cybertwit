@@ -1,0 +1,30 @@
+[
+  {
+    "name": "The Hacker News",
+    "url": "https://feeds.feedburner.com/TheHackersNews"
+  },
+  {
+    "name": "Krebs on Security",
+    "url": "https://krebsonsecurity.com/feed/"
+  },
+  {
+    "name": "CISA",
+    "url": "https://www.cisa.gov/cybersecurity-advisories/all.xml"
+  },
+  {
+    "name": "BleepingComputer",
+    "url": "https://www.bleepingcomputer.com/feed/"
+  },
+  {
+    "name": "Dark Reading",
+    "url": "https://www.darkreading.com/rss.xml"
+  },
+  {
+    "name": "Google Security Blog",
+    "url": "https://security.googleblog.com/feeds/posts/default"
+  },
+  {
+    "name": "Schneier on Security",
+    "url": "https://www.schneier.com/feed/atom/"
+  }
+]

@@ -1,53 +1,134 @@
-from typing import List, Dict, Iterable
+import json
 import re
+from pathlib import Path
+from typing import Dict, Iterable, List
 
-CYBER_KEYWORDS = [
-    # --- Artificial Intelligence / LLM Security ---
-    "artificial intelligence", "ai security", "llm security", "model theft",
-    "model poisoning", "data poisoning", "prompt injection",
-    "adversarial ai", "ai alignment", "ai jailbreak",
-    "training data leak", "model inversion", "inference attack", "large language model", "large language models",
-    "openai", "gemini", "gpt-4", "claude", "anthropic",
-
-
-    # --- Cloud & API Security ---
-    "cloud security", "cloud breach", "cloud misconfiguration",
-    "api security", "api abuse", "exposed api",
-    "iam misconfiguration", "privilege escalation",
-    "identity compromise", "service account abuse",
-    "container escape", "kubernetes attack", "supply chain attack", "azure",
-
-    # --- Critical Infrastructure / Power Grid / OT ---
-    "critical infrastructure", "power grid", "electric grid",
-    "energy sector", "scada", "ics security",
-    "operational technology", "ot security",
-    "industrial control system", "grid disruption",
-    "substation", "utility provider",
-
-    # --- Drones / Robotics / Autonomous Systems ---
-    "drone security", "uav", "unmanned aerial vehicle",
-    "autonomous system", "robotics security",
-    "robot takeover", "navigation spoofing",
-    "gps spoofing", "command hijacking",
-    "remote control abuse", "firmware tampering", "drone", "drones",
-    "robot", "robots", "robotics", 
-
+DEFAULT_KEYWORDS = [
+    "artificial intelligence",
+    "ai security",
+    "llm security",
+    "model theft",
+    "model poisoning",
+    "data poisoning",
+    "prompt injection",
+    "adversarial ai",
+    "ai alignment",
+    "ai jailbreak",
+    "training data leak",
+    "model inversion",
+    "inference attack",
+    "large language model",
+    "large language models",
+    "openai",
+    "gemini",
+    "gpt-4",
+    "claude",
+    "anthropic",
+    "cloud security",
+    "cloud breach",
+    "cloud misconfiguration",
+    "api security",
+    "api abuse",
+    "exposed api",
+    "iam misconfiguration",
+    "privilege escalation",
+    "identity compromise",
+    "service account abuse",
+    "container escape",
+    "kubernetes attack",
+    "supply chain attack",
+    "azure",
+    "critical infrastructure",
+    "power grid",
+    "electric grid",
+    "energy sector",
+    "scada",
+    "ics security",
+    "operational technology",
+    "ot security",
+    "industrial control system",
+    "grid disruption",
+    "substation",
+    "utility provider",
+    "drone security",
+    "uav",
+    "unmanned aerial vehicle",
+    "autonomous system",
+    "robotics security",
+    "robot takeover",
+    "navigation spoofing",
+    "gps spoofing",
+    "command hijacking",
+    "remote control abuse",
+    "firmware tampering",
+    "drone",
+    "drones",
+    "robot",
+    "robots",
+    "robotics",
 ]
 
+DEFAULT_SHORT_WORDS = ["ai", "llm", "rf", "uav", "aws"]
+DEFAULT_FIELDS = ["title", "summary"]
+FILTERS_PATH = Path("filters.json")
 
-DEFAULT_FIELDS = ("title", "summary")
 
-SHORT_WORDS = ["ai", "llm", "rf", "uav", "aws"]
-SHORT_PAT = re.compile(r"\b(" + "|".join(map(re.escape, SHORT_WORDS)) + r")\b", re.IGNORECASE)
+def load_filter_config() -> Dict[str, List[str]]:
+    defaults = {
+        "fields": DEFAULT_FIELDS,
+        "keywords": DEFAULT_KEYWORDS,
+        "short_words": DEFAULT_SHORT_WORDS,
+    }
+
+    if not FILTERS_PATH.exists():
+        return defaults
+
+    data = json.loads(FILTERS_PATH.read_text(encoding="utf-8"))
+
+    if not isinstance(data, dict):
+        raise ValueError("filters.json must contain a JSON object.")
+
+    fields = data.get("fields", DEFAULT_FIELDS)
+    keywords = data.get("keywords", DEFAULT_KEYWORDS)
+    short_words = data.get("short_words", DEFAULT_SHORT_WORDS)
+
+    if not isinstance(fields, list) or not all(isinstance(item, str) and item.strip() for item in fields):
+        raise ValueError("filters.json field 'fields' must be a list of non-empty strings.")
+    if not isinstance(keywords, list) or not all(isinstance(item, str) and item.strip() for item in keywords):
+        raise ValueError("filters.json field 'keywords' must be a list of non-empty strings.")
+    if not isinstance(short_words, list) or not all(isinstance(item, str) and item.strip() for item in short_words):
+        raise ValueError("filters.json field 'short_words' must be a list of non-empty strings.")
+
+    return {
+        "fields": [item.strip() for item in fields],
+        "keywords": [item.strip().casefold() for item in keywords],
+        "short_words": [item.strip() for item in short_words],
+    }
+
+
+def build_short_word_pattern(short_words: List[str]) -> re.Pattern[str] | None:
+    if not short_words:
+        return None
+
+    return re.compile(
+        r"\b(" + "|".join(map(re.escape, short_words)) + r")\b",
+        re.IGNORECASE,
+    )
+
+
 def filter_items(items: Iterable[Dict]) -> List[Dict]:
+    config = load_filter_config()
+    fields = config["fields"]
+    keywords = config["keywords"]
+    short_pattern = build_short_word_pattern(config["short_words"])
     filtered = []
 
     for item in items:
         parts = []
-        for f in DEFAULT_FIELDS:
-            v = item.get(f)
-            if v:
-                parts.append(str(v))
+        for field in fields:
+            value = item.get(field)
+            if value:
+                parts.append(str(value))
 
         if not parts:
             continue
@@ -55,14 +136,11 @@ def filter_items(items: Iterable[Dict]) -> List[Dict]:
         text_raw = " ".join(parts)
         text = text_raw.casefold()
 
-        # High-signal whole-word matches
-        if SHORT_PAT.search(text_raw):
+        if short_pattern and short_pattern.search(text_raw):
             filtered.append(item)
             continue
 
-        # General keyword matching
-        if any(k in text for k in CYBER_KEYWORDS):
+        if any(keyword in text for keyword in keywords):
             filtered.append(item)
 
     return filtered
-
