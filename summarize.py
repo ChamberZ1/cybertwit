@@ -1,6 +1,7 @@
 from typing import List, Dict
 from dotenv import load_dotenv
 import os
+import time
 import requests
 from google import genai
 
@@ -143,20 +144,29 @@ def ai_daily_digest(items: List[Dict]) -> str:
         return ""
 
     prompt = build_digest_prompt(items)
+    delays = [5, 15, 30]
 
-    try:
-        summary = summarize_with_gemini(prompt)
-        if summary:
-            return summary
-    except Exception as e:
-        print(f"Gemini summarization failed: {e}")
+    for attempt, delay in enumerate(delays, start=1):
+        try:
+            summary = summarize_with_gemini(prompt)
+            if summary:
+                return summary
+        except Exception as e:
+            print(f"Gemini attempt {attempt}/3 failed: {e}")
+            if attempt < len(delays):
+                print(f"Retrying Gemini in {delay}s...")
+                time.sleep(delay)
 
-    try:
-        summary = summarize_with_groq(prompt)
-        if summary:
-            return summary
-    except Exception as e:
-        print(f"Groq summarization failed: {e}")
+    for attempt, delay in enumerate(delays, start=1):
+        try:
+            summary = summarize_with_groq(prompt)
+            if summary:
+                return summary
+        except Exception as e:
+            print(f"Groq attempt {attempt}/3 failed: {e}")
+            if attempt < len(delays):
+                print(f"Retrying Groq in {delay}s...")
+                time.sleep(delay)
 
     try:
         summary = summarize_with_open_router(prompt)
