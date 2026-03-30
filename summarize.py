@@ -7,13 +7,16 @@ from google import genai
 load_dotenv()  # Load environment variables from .env file if present
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY") or os.getenv("GROQ_API")
+OPEN_ROUTER_API_KEY = os.getenv("OPEN_ROUTER_API_KEY")
 DEFAULT_GEMINI_MODEL_NAME = "gemini-3-flash-preview"
 DEFAULT_GROQ_MODEL_NAME = "llama-3.1-8b-instant"
+OPEN_ROUTER_MODEL = "openrouter/free"  # auto-routes to best available free model
 
 client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
 GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", DEFAULT_GEMINI_MODEL_NAME)
 GROQ_MODEL_NAME = os.getenv("GROQ_MODEL_NAME", DEFAULT_GROQ_MODEL_NAME)
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
+OPEN_ROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 def build_news_block(items: List[Dict]) -> str:
     blocks = []
@@ -102,6 +105,39 @@ def summarize_with_groq(prompt: str) -> str:
         .strip()
     )
 
+def summarize_with_open_router(prompt: str) -> str:
+    if not OPEN_ROUTER_API_KEY:
+        return ""
+
+    response = requests.post(
+        OPEN_ROUTER_API_URL,
+        headers={
+            "Authorization": f"Bearer {OPEN_ROUTER_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "model": OPEN_ROUTER_MODEL,
+            "messages": [
+                {"role": "system", "content": "You are a cybersecurity news analyst."},
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": 0.2,
+        },
+        timeout=30,
+    )
+    if not response.ok:
+        raise requests.HTTPError(
+            f"{response.status_code} {response.reason}: {response.text}",
+            response=response,
+        )
+    data = response.json()
+    return (
+        data.get("choices", [{}])[0]
+        .get("message", {})
+        .get("content", "")
+        .strip()
+    )
+
 def ai_daily_digest(items: List[Dict]) -> str:
     if not items:
         return ""
@@ -122,7 +158,14 @@ def ai_daily_digest(items: List[Dict]) -> str:
     except Exception as e:
         print(f"Groq summarization failed: {e}")
 
-    print("AI summarization failed: Gemini and Groq were unavailable.")
+    try:
+        summary = summarize_with_open_router(prompt)
+        if summary:
+            return summary
+    except Exception as e:
+        print(f"OpenRouter summarization failed: {e}")
+
+    print("AI summarization failed: Gemini, Groq, and OpenRouter were unavailable.")
     return ""
 
 
