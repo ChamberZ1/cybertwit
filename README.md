@@ -1,6 +1,6 @@
 # cybertwit
 
-Cybersecurity news bot that pulls RSS feeds, filters stories, and generates a daily digest with Gemini or Groq.
+Cybersecurity news bot that pulls RSS feeds, filters stories, and generates a daily digest with Gemini, Groq, or a free model from OpenRouter.
 
 ## Make It Your Own
 
