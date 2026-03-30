@@ -37,6 +37,14 @@ cp .env.example .env
 python main.py
 ```
 
+## AI Summarization
+
+The bot tries three providers in order, falling back to the next if one fails. Gemini and Groq are each retried up to 3 times with incremental delays (5s, 15s, 30s) before giving up and moving on.
+
+1. **Gemini** — primary
+2. **Groq** — first fallback
+3. **OpenRouter** (free tier) — final fallback; uses `openrouter/free` which auto-routes to the best available free model
+
 ## Environment Variables
 
 For local runs, the app loads values from `.env` if present.
@@ -47,6 +55,7 @@ Required or commonly used variables:
 - `GEMINI_MODEL_NAME`
 - `GROQ_API_KEY`
 - `GROQ_MODEL_NAME`
+- `OPEN_ROUTER_API_KEY`
 - `MAIL_USERNAME`
 - `MAIL_PASSWORD`
 - `MAIL_TO`
@@ -55,6 +64,7 @@ Notes:
 
 - `MAIL_PASSWORD` should usually be an app password, not your normal inbox password. You will have to set this up with your email service provider (Gmail, Outlook, etc)
 - The code accepts `GROQ_API_KEY` and also supports the older `GROQ_API` name for backward compatibility.
+- `OPEN_ROUTER_API_KEY` is only used if both Gemini and Groq fail. Get a free key at openrouter.ai.
 
 ## Customizing Sources
 
@@ -107,8 +117,9 @@ If someone forks this repo and wants the scheduled workflow to run in GitHub:
 3. Add these repository secrets:
    - `GEMINI_API_KEY`
    - `GROQ_API_KEY`
+   - `OPEN_ROUTER_API_KEY`
    - `MAIL_USERNAME`
-   - `MAIL_PASSWORD`
+   - `MAIL_PASSWORD`  , again this would typically be an app password, NOT your actual email account password.
    - `MAIL_TO`
 4. Enable Actions for the fork if GitHub has them disabled by default.
 5. Run the workflow manually once from the `Actions` tab to verify setup.
@@ -123,7 +134,7 @@ The scheduled workflow lives in `.github/workflows/daily_actions.yml`.
 - `feeds.py`: feed-loading and validation logic
 - `main.py`: main bot entry point
 - `filter.py`: filter-loading and matching logic
-- `summarize.py`: Gemini and Groq integration
+- `summarize.py`: Gemini, Groq, and OpenRouter integration with retry logic
 - `.github/workflows/daily_actions.yml`: scheduled GitHub Actions runner
 
 ## Security
