@@ -53,7 +53,7 @@ Required or commonly used variables:
 
 Notes:
 
-- `MAIL_PASSWORD` should usually be an app password, not your normal inbox password.
+- `MAIL_PASSWORD` should usually be an app password, not your normal inbox password. You will have to set this up with your email service provider (Gmail, Outlook, etc)
 - The code accepts `GROQ_API_KEY` and also supports the older `GROQ_API` name for backward compatibility.
 
 ## Customizing Sources
