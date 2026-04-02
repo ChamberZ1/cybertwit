@@ -60,9 +60,11 @@ class SummarizeTests(unittest.TestCase):
             }
         ]
 
-        with patch(
+        with patch.object(summarize, "client", object()), patch(
             "summarize.summarize_with_gemini",
             side_effect=RuntimeError("Gemini overloaded"),
+        ), patch("summarize.time.sleep", return_value=None), patch.object(
+            summarize, "GROQ_API_KEY", "test-key"
         ), patch(
             "summarize.summarize_with_groq",
             return_value="Phishing risk highlighted\nhttps://example.com/story",

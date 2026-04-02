@@ -64,9 +64,6 @@ News items:
 """
 
 def summarize_with_gemini(prompt: str) -> str:
-    if not client:
-        return ""
-
     response = client.models.generate_content(
         model=GEMINI_MODEL_NAME,
         contents=prompt
@@ -74,9 +71,6 @@ def summarize_with_gemini(prompt: str) -> str:
     return (response.text or "").strip()
 
 def summarize_with_groq(prompt: str) -> str:
-    if not GROQ_API_KEY:
-        return ""
-
     response = requests.post(
         GROQ_API_URL,
         headers={
@@ -107,9 +101,6 @@ def summarize_with_groq(prompt: str) -> str:
     )
 
 def summarize_with_open_router(prompt: str) -> str:
-    if not OPEN_ROUTER_API_KEY:
-        return ""
-
     response = requests.post(
         OPEN_ROUTER_API_URL,
         headers={
@@ -144,36 +135,39 @@ def ai_daily_digest(items: List[Dict]) -> str:
         return ""
 
     prompt = build_digest_prompt(items)
-    delays = [5, 15, 30]
+    delays = [6, 9]  # first REtry has 6s delay, second has 9s delay, total 3 tries.
 
-    for attempt, delay in enumerate(delays, start=1):
+    if client:
+        for attempt in range(3):
+            try:
+                summary = summarize_with_gemini(prompt)
+                if summary:
+                    return summary
+            except Exception as e:
+                print(f"Gemini attempt {attempt+1}/3 failed: {e}")
+                if attempt < 2:
+                    print(f"Retrying Gemini in {delays[attempt]}s...")
+                    time.sleep(delays[attempt])
+
+    if GROQ_API_KEY:
+        for attempt in range(3):
+            try:
+                summary = summarize_with_groq(prompt)
+                if summary:
+                    return summary
+            except Exception as e:
+                print(f"Groq attempt {attempt+1}/3 failed: {e}")
+                if attempt < 2:
+                    print(f"Retrying Groq in {delays[attempt]}s...")
+                    time.sleep(delays[attempt])
+
+    if OPEN_ROUTER_API_KEY:
         try:
-            summary = summarize_with_gemini(prompt)
+            summary = summarize_with_open_router(prompt)
             if summary:
                 return summary
         except Exception as e:
-            print(f"Gemini attempt {attempt}/3 failed: {e}")
-            if attempt < len(delays):
-                print(f"Retrying Gemini in {delay}s...")
-                time.sleep(delay)
-
-    for attempt, delay in enumerate(delays, start=1):
-        try:
-            summary = summarize_with_groq(prompt)
-            if summary:
-                return summary
-        except Exception as e:
-            print(f"Groq attempt {attempt}/3 failed: {e}")
-            if attempt < len(delays):
-                print(f"Retrying Groq in {delay}s...")
-                time.sleep(delay)
-
-    try:
-        summary = summarize_with_open_router(prompt)
-        if summary:
-            return summary
-    except Exception as e:
-        print(f"OpenRouter summarization failed: {e}")
+            print(f"OpenRouter summarization failed: {e}")
 
     print("AI summarization failed: Gemini, Groq, and OpenRouter were unavailable.")
     return ""
