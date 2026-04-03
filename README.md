@@ -126,6 +126,8 @@ If someone forks this repo and wants the scheduled workflow to run in GitHub:
 
 The scheduled workflow lives in `.github/workflows/daily_actions.yml`.
 
+> **Note:** The secret names in GitHub must match the names referenced in `daily_actions.yml`. If you use different secret names in GitHub, update the right-hand side of the corresponding `env:` entries in the workflow file to match. For example, if your Groq secret is named `MY_GROQ_KEY`, change `${{ secrets.GROQ_API_KEY }}` to `${{ secrets.MY_GROQ_KEY }}`.
+
 ## Files That Matter
 
 - `feeds.json`: editable source list
