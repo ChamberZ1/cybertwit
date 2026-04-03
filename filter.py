@@ -1,4 +1,5 @@
 import json
+import logging
 import re
 from pathlib import Path
 from typing import Dict, Iterable, List
@@ -83,27 +84,31 @@ def load_filter_config() -> Dict[str, List[str]]:
     if not FILTERS_PATH.exists():
         return defaults
 
-    data = json.loads(FILTERS_PATH.read_text(encoding="utf-8"))
+    try:
+        data = json.loads(FILTERS_PATH.read_text(encoding="utf-8"))
 
-    if not isinstance(data, dict):
-        raise ValueError("filters.json must contain a JSON object.")
+        if not isinstance(data, dict):
+            raise ValueError("filters.json must contain a JSON object.")
 
-    fields = data.get("fields", DEFAULT_FIELDS)
-    keywords = data.get("keywords", DEFAULT_KEYWORDS)
-    short_words = data.get("short_words", DEFAULT_SHORT_WORDS)
+        fields = data.get("fields", DEFAULT_FIELDS)
+        keywords = data.get("keywords", DEFAULT_KEYWORDS)
+        short_words = data.get("short_words", DEFAULT_SHORT_WORDS)
 
-    if not isinstance(fields, list) or not all(isinstance(item, str) and item.strip() for item in fields):
-        raise ValueError("filters.json field 'fields' must be a list of non-empty strings.")
-    if not isinstance(keywords, list) or not all(isinstance(item, str) and item.strip() for item in keywords):
-        raise ValueError("filters.json field 'keywords' must be a list of non-empty strings.")
-    if not isinstance(short_words, list) or not all(isinstance(item, str) and item.strip() for item in short_words):
-        raise ValueError("filters.json field 'short_words' must be a list of non-empty strings.")
+        if not isinstance(fields, list) or not all(isinstance(item, str) and item.strip() for item in fields):
+            raise ValueError("filters.json field 'fields' must be a list of non-empty strings.")
+        if not isinstance(keywords, list) or not all(isinstance(item, str) and item.strip() for item in keywords):
+            raise ValueError("filters.json field 'keywords' must be a list of non-empty strings.")
+        if not isinstance(short_words, list) or not all(isinstance(item, str) and item.strip() for item in short_words):
+            raise ValueError("filters.json field 'short_words' must be a list of non-empty strings.")
 
-    return {
-        "fields": [item.strip() for item in fields],
-        "keywords": [item.strip().casefold() for item in keywords],
-        "short_words": [item.strip() for item in short_words],
-    }
+        return {
+            "fields": [item.strip() for item in fields],
+            "keywords": [item.strip().casefold() for item in keywords],
+            "short_words": [item.strip() for item in short_words],
+        }
+    except Exception as e:
+        logging.warning(f"Failed to load filters.json ({e}), using defaults.")
+        return defaults
 
 
 def build_short_word_pattern(short_words: List[str]) -> re.Pattern[str] | None:
