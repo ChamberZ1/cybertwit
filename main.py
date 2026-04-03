@@ -41,4 +41,8 @@ def main():
     save_posted_links(posted_links)
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        logging.error(f"Bot failed: {e}")
+        raise
