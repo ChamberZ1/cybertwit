@@ -1,4 +1,5 @@
 import json
+import logging
 from pathlib import Path
 from typing import Set, Iterable
 
@@ -9,7 +10,8 @@ def load_posted_links() -> Set[str]:
         return set()
     try:
         return set(json.loads(STATE_PATH.read_text(encoding="utf-8")))
-    except Exception:
+    except Exception as e:
+        logging.warning(f"Could not read posted_links.json ({e}), starting with empty state.")
         return set()
 
 def save_posted_links(links: Iterable[str]) -> None:
