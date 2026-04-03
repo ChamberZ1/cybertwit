@@ -35,17 +35,18 @@ def fetch_rss_feeds(feeds: List[Tuple[str, str]]) -> List[Dict]:
                 if not link or link in seen_links:
                     continue
 
-                published = None
+                published = None 
                 if "published" in entry:
                     try:
-                        published = date_parser.parse(entry.published)
+                        published = date_parser.parse(entry.published)  # parse the date string from the feed (e.g. "Thu, 01 Apr 2026 14:00:00 GMT")
 
+                        # normalize to UTC for consistent comparison.
                         if published.tzinfo is None:
-                            published = published.replace(tzinfo=timezone.utc)
+                            published = published.replace(tzinfo=timezone.utc)  # if no timezone info, assume UTC
                         else:
-                            published = published.astimezone(timezone.utc)
-                    except Exception:
-                        pass
+                            published = published.astimezone(timezone.utc)  # otherwise convert to UTC
+                    except Exception as e:
+                        logging.warning(f"Could not normalize datetime for entry '{entry.get('title', 'unknown')}': {e}")  # log errors
 
                 if published and published < time_threshold:
                     continue
