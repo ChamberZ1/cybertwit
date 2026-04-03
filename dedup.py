@@ -14,7 +14,9 @@ def load_posted_links() -> Set[str]:
 
 def save_posted_links(links: Iterable[str]) -> None:
     STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    STATE_PATH.write_text(
+    tmp_path = STATE_PATH.with_suffix(".tmp")
+    tmp_path.write_text(
         json.dumps(sorted(set(links)), ensure_ascii=False, indent=2),
         encoding="utf-8"
     )
+    tmp_path.replace(STATE_PATH)
