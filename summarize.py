@@ -94,7 +94,10 @@ def summarize_with_groq(prompt: str) -> str:
             f"{response.status_code} {response.reason}: {response.text}",
             response=response,
         )
-    data = response.json()
+    try:
+        data = response.json()
+    except Exception as e:
+        raise ValueError(f"Groq returned non-JSON response: {e}")
     return (
         data.get("choices", [{}])[0]
         .get("message", {})
@@ -124,7 +127,10 @@ def summarize_with_open_router(prompt: str) -> str:
             f"{response.status_code} {response.reason}: {response.text}",
             response=response,
         )
-    data = response.json()
+    try:
+        data = response.json()
+    except Exception as e:
+        raise ValueError(f"OpenRouter returned non-JSON response: {e}")
     return (
         data.get("choices", [{}])[0]
         .get("message", {})

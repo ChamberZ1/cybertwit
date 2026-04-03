@@ -21,7 +21,15 @@ def load_feeds() -> List[Tuple[str, str]]:
     if not FEEDS_PATH.exists():
         return DEFAULT_FEEDS
 
-    data = json.loads(FEEDS_PATH.read_text(encoding="utf-8"))
+    try:
+        text = FEEDS_PATH.read_text(encoding="utf-8")
+    except Exception as e:
+        raise ValueError(f"Could not read feeds.json: {e}")
+
+    try:
+        data = json.loads(text)
+    except Exception as e:
+        raise ValueError(f"feeds.json is not valid JSON: {e}")
     feeds = []
 
     if not isinstance(data, list):
