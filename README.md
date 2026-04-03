@@ -39,7 +39,7 @@ python main.py
 
 ## AI Summarization
 
-The bot tries three providers in order, falling back to the next if one fails. Gemini and Groq are each retried up to 3 times with incremental delays (5s, 15s, 30s) before giving up and moving on.
+The bot tries three providers in order, falling back to the next if one fails. Gemini and Groq are each attempted up to 3 times (2 retries) with incremental delays (6s, 9s) between attempts before giving up and moving on.
 
 1. **Gemini** — primary
 2. **Groq** — first fallback

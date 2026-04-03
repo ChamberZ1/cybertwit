@@ -99,7 +99,7 @@ def summarize_with_groq(prompt: str) -> str:
     except Exception as e:
         raise ValueError(f"Groq returned non-JSON response: {e}")
     return (
-        data.get("choices", [{}])[0]
+        (data.get("choices") or [{}])[0]
         .get("message", {})
         .get("content", "")
         .strip()
@@ -132,7 +132,7 @@ def summarize_with_open_router(prompt: str) -> str:
     except Exception as e:
         raise ValueError(f"OpenRouter returned non-JSON response: {e}")
     return (
-        data.get("choices", [{}])[0]
+        (data.get("choices") or [{}])[0]
         .get("message", {})
         .get("content", "")
         .strip()
