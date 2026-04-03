@@ -18,7 +18,6 @@ OPEN_ROUTER_MODEL = "openrouter/free"  # auto-routes to best available free mode
 client = genai.Client(api_key=GEMINI_API_KEY, http_options=types.HttpOptions(timeout=30000)) if GEMINI_API_KEY else None
 GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", DEFAULT_GEMINI_MODEL_NAME)
 GROQ_MODEL_NAME = os.getenv("GROQ_MODEL_NAME", DEFAULT_GROQ_MODEL_NAME)
-logging.info(f"API clients loaded — Gemini: {'yes' if GEMINI_API_KEY else 'no'}, Groq: {'yes' if GROQ_API_KEY else 'no'}, OpenRouter: {'yes' if OPEN_ROUTER_API_KEY else 'no'}")
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 OPEN_ROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
