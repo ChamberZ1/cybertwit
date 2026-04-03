@@ -4,6 +4,7 @@ import os
 import time
 import requests
 from google import genai
+from google.genai import types
 
 load_dotenv()  # Load environment variables from .env file if present
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -13,7 +14,7 @@ DEFAULT_GEMINI_MODEL_NAME = "gemini-3-flash-preview"
 DEFAULT_GROQ_MODEL_NAME = "llama-3.1-8b-instant"
 OPEN_ROUTER_MODEL = "openrouter/free"  # auto-routes to best available free model
 
-client = genai.Client(api_key=GEMINI_API_KEY) if GEMINI_API_KEY else None
+client = genai.Client(api_key=GEMINI_API_KEY, http_options=types.HttpOptions(timeout=30000)) if GEMINI_API_KEY else None
 GEMINI_MODEL_NAME = os.getenv("GEMINI_MODEL_NAME", DEFAULT_GEMINI_MODEL_NAME)
 GROQ_MODEL_NAME = os.getenv("GROQ_MODEL_NAME", DEFAULT_GROQ_MODEL_NAME)
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
