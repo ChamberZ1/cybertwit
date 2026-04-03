@@ -1,8 +1,15 @@
+import logging
 from rss_fetch import fetch_rss_feeds
 from filter import filter_items
 from summarize import format_summaries, ai_daily_digest
 from dedup import load_posted_links, save_posted_links
 from feeds import load_feeds
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+    datefmt="%Y-%m-%dT%H:%M:%S",
+)
 
 def main():
     feeds = load_feeds()
@@ -18,7 +25,7 @@ def main():
     ]
 
     if not fresh_items:
-        print("No new articles to post.")
+        logging.info("No new articles to post.")
         return
 
     ai_content = ai_daily_digest(fresh_items)

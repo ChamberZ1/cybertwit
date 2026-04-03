@@ -1,3 +1,4 @@
+import logging
 from typing import List, Dict
 from dotenv import load_dotenv
 import os
@@ -145,9 +146,9 @@ def ai_daily_digest(items: List[Dict]) -> str:
                 if summary:
                     return summary
             except Exception as e:
-                print(f"Gemini attempt {attempt+1}/3 failed: {e}")
+                logging.warning(f"Gemini attempt {attempt+1}/3 failed: {e}")
                 if attempt < 2:
-                    print(f"Retrying Gemini in {delays[attempt]}s...")
+                    logging.info(f"Retrying Gemini in {delays[attempt]}s...")
                     time.sleep(delays[attempt])
 
     if GROQ_API_KEY:
@@ -157,9 +158,9 @@ def ai_daily_digest(items: List[Dict]) -> str:
                 if summary:
                     return summary
             except Exception as e:
-                print(f"Groq attempt {attempt+1}/3 failed: {e}")
+                logging.warning(f"Groq attempt {attempt+1}/3 failed: {e}")
                 if attempt < 2:
-                    print(f"Retrying Groq in {delays[attempt]}s...")
+                    logging.info(f"Retrying Groq in {delays[attempt]}s...")
                     time.sleep(delays[attempt])
 
     if OPEN_ROUTER_API_KEY:
@@ -168,9 +169,9 @@ def ai_daily_digest(items: List[Dict]) -> str:
             if summary:
                 return summary
         except Exception as e:
-            print(f"OpenRouter summarization failed: {e}")
+            logging.warning(f"OpenRouter summarization failed: {e}")
 
-    print("AI summarization failed: Gemini, Groq, and OpenRouter were unavailable.")
+    logging.error("AI summarization failed: Gemini, Groq, and OpenRouter were unavailable.")
     return ""
 
 

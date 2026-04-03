@@ -1,4 +1,5 @@
 import feedparser
+import logging
 import requests
 from typing import List, Dict, Tuple
 from dateutil import parser as date_parser
@@ -60,7 +61,7 @@ def fetch_rss_feeds(feeds: List[Tuple[str, str]]) -> List[Dict]:
                 })
 
         except Exception as e:
-            print(f"Error fetching {source_name}: {e}")
+            logging.error(f"Error fetching {source_name}: {e}")
 
     return articles
 
