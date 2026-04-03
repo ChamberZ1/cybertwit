@@ -1,6 +1,8 @@
 import json
+import logging
 from pathlib import Path
 from typing import List, Tuple
+from urllib.parse import urlparse
 
 DEFAULT_FEEDS = [
     ("The Hacker News", "https://feeds.feedburner.com/TheHackersNews"),
@@ -34,6 +36,11 @@ def load_feeds() -> List[Tuple[str, str]]:
 
         if not name or not url:
             raise ValueError("Each feed entry must include non-empty 'name' and 'url' values.")
+
+        parsed = urlparse(url)
+        if parsed.scheme not in ("http", "https") or not parsed.netloc:
+            logging.warning(f"Skipping feed '{name}': invalid URL '{url}'")
+            continue
 
         feeds.append((name, url))
 
