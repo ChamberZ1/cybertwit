@@ -12,7 +12,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY") or os.getenv("GROQ_API")
 OPEN_ROUTER_API_KEY = os.getenv("OPEN_ROUTER_API_KEY")
 DEFAULT_GEMINI_MODEL_NAME = "gemini-3-flash-preview"
-DEFAULT_GROQ_MODEL_NAME = "llama-3.1-8b-instant"
+DEFAULT_GROQ_MODEL_NAME = "llama-3.3-70b-versatile"
 OPEN_ROUTER_MODEL = "openrouter/free"  # auto-routes to best available free model
 
 client = genai.Client(api_key=GEMINI_API_KEY, http_options=types.HttpOptions(timeout=30000)) if GEMINI_API_KEY else None
@@ -60,6 +60,7 @@ Rules:
 - Active voice, no emojis, no hashtags, no em-dashes, no marketing language, no "facilitate"
 - Blank line between each bullet+link pair
 - Assume a technical audience (SOC analysts, pentesters, security engineers)
+- Use ONLY the links provided in the news items. Do not generate, infer, or modify any URLs.
 
 News items:
 {news_block}
